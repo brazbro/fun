@@ -86,6 +86,39 @@ object List {
     go(l)
   }
 
+  /**
+    * foldRight can cause a stack overflow
+    */
+  def foldRight[A, B](l: List[A], z: B)(f: (A, B) => B): B = l match {
+    case Nil => z
+    case Cons(h, t) => f(h, foldRight(t, z)(f))
+  }
+
+  /**
+    * 3.9: length using foldRight
+    */
+  def length[A](l: List[A]): Int = foldRight(l, 0)((_, s) => s + 1)
+
+  /**
+    * 3.10: Tail-recursive foldLeft
+    */
+  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = {
+    var result: B = z
+    @annotation.tailrec
+    def go(l: List[A]): B = l match {
+      case Nil => result
+      case Cons(x, xs) => result = f(result, x); go(xs)
+    }
+    go(l)
+    result
+  }
+
+  @annotation.tailrec
+  def betterFoldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = l match {
+    case Nil => z
+    case Cons(h, t) => betterFoldLeft(t, f(z, h))(f)
+  }
+
   def main(args: Array[String]): Unit = {
     val x = List(1, 2, 3, 4) match {
       case Cons(x, Cons(2, Cons(4, _))) => x
@@ -95,7 +128,14 @@ object List {
       case _ => 101
     }
     println("x = " + x)
-
     println(tail(List(3, 5, 12, -2, 34)))
+
+    /* 3.8: pass Nil and Cons to foldRight */
+    val z = foldRight(List(1, 2, 3), Nil:List[Int])(Cons(_, _))
+    println(z)
+
+    val l1 = List(1,2,3,4,5,6,7,8,9,10)
+    println("Length of " + l1 + "=" + length(l1))
+    println("Length of Nil=" + length(Nil:List[Int]))
   }
 }

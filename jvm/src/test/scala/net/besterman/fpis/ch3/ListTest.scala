@@ -83,4 +83,22 @@ class ListTest extends FunSpec {
       assert(init(list2) === Nil)
     }
   }
+
+  describe("List.foldLeft") {
+    it("should work") {
+      val list = List(1, 2, 3, 4)
+      val sum = foldLeft(list, 0)(_ + _)
+      val sum2 = betterFoldLeft(list, 0)(_ + _)
+      val product = foldLeft(list, 1)(_ * _)
+      val product2 = betterFoldLeft(list, 1)(_ * _)
+      val length = foldLeft(list, 0)((acc, _) => acc + 1)
+      val length2 = betterFoldLeft(list, 0)((acc, _) => acc + 1)
+      assert(sum === 10)
+      assert(sum2 === 10)
+      assert(product === 24)
+      assert(product2 === 24)
+      assert(length === 4)
+      assert(length2 === 4)
+    }
+  }
 }
