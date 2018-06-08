@@ -84,21 +84,49 @@ class ListTest extends FunSpec {
     }
   }
 
+  private def doFold[A, B](l: List[A], z: B)(f: (B, A) => B)(foldFn: (List[A], B) => ((B, A) => B) => B): B = {
+    foldFn(l, z)(f)
+  }
+
+  private def doFoldLeftTests(foldFn: (List[Int], Int) => ((Int, Int) => Int) => Int) = {
+    val list = List(1, 2, 3, 4)
+    val sum = doFold(list, 0)(_ + _)(foldFn)
+    assert(sum === 10)
+    val product = doFold(list, 1)(_ * _)(foldFn)
+    assert(product === 24)
+    val length = doFold(list, 0)((acc, _) => acc + 1)(foldFn)
+    assert(length === 4)
+  }
+
   describe("List.foldLeft") {
-    it("should work") {
-      val list = List(1, 2, 3, 4)
-      val sum = foldLeft(list, 0)(_ + _)
-      val sum2 = betterFoldLeft(list, 0)(_ + _)
-      val product = foldLeft(list, 1)(_ * _)
-      val product2 = betterFoldLeft(list, 1)(_ * _)
-      val length = foldLeft(list, 0)((acc, _) => acc + 1)
-      val length2 = betterFoldLeft(list, 0)((acc, _) => acc + 1)
-      assert(sum === 10)
-      assert(sum2 === 10)
-      assert(product === 24)
-      assert(product2 === 24)
-      assert(length === 4)
-      assert(length2 === 4)
+    it("My foldLeft should work") {
+      doFoldLeftTests(foldLeft)
+    }
+
+    it("Better foldLeft should work") {
+      doFoldLeftTests(betterFoldLeft)
+    }
+  }
+
+  describe("List.foldLeft functions") {
+    it("flSum should work") {
+      assert(flSum(List(1, 2, 3, 4, 5)) === 15)
+      assert(flSum(List()) === 0)
+      assert(flSum(Nil) === 0)
+    }
+
+    it("flProduct should work") {
+      assert(flProduct(List(1, 2, 3, 4, 5)) === 120)
+
+      // Empty product is 1 (https://en.wikipedia.org/wiki/Empty_product)
+      assert(flProduct(List()) === 1)
+      assert(flProduct(Nil) === 1)
+    }
+
+    it("flLength should work") {
+      assert(flLength(Nil) === 0)
+      assert(flLength(List()) === 0)
+      assert(flLength(List(8, 7, 6, 5, 4, 3, 2, 1)) === 8)
     }
   }
 }

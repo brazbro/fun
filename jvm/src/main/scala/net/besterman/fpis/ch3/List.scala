@@ -119,6 +119,16 @@ object List {
     case Cons(h, t) => betterFoldLeft(t, f(z, h))(f)
   }
 
+  /**
+    * 3.11: sum, product and length using foldLeft
+    */
+
+  def flSum(l: List[Int]): Int = betterFoldLeft(l, 0)(_ + _)
+
+  def flProduct(l: List[Int]): Int = betterFoldLeft(l, 1)(_ * _)
+
+  def flLength(l: List[Int]): Int = betterFoldLeft(l, 0)((acc, _) => acc + 1)
+
   def main(args: Array[String]): Unit = {
     val x = List(1, 2, 3, 4) match {
       case Cons(x, Cons(2, Cons(4, _))) => x
