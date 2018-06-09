@@ -113,21 +113,46 @@ object List {
     result
   }
 
+  /* simpler than mine */
   @annotation.tailrec
-  def betterFoldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = l match {
+  def foldLeft2[A, B](l: List[A], z: B)(f: (B, A) => B): B = l match {
     case Nil => z
-    case Cons(h, t) => betterFoldLeft(t, f(z, h))(f)
+    case Cons(h, t) => foldLeft2(t, f(z, h))(f)
   }
 
   /**
     * 3.11: sum, product and length using foldLeft
     */
 
-  def flSum(l: List[Int]): Int = betterFoldLeft(l, 0)(_ + _)
+  def flSum(l: List[Int]): Int = foldLeft2(l, 0)(_ + _)
 
-  def flProduct(l: List[Int]): Int = betterFoldLeft(l, 1)(_ * _)
+  def flProduct(l: List[Int]): Int = foldLeft2(l, 1)(_ * _)
 
-  def flLength(l: List[Int]): Int = betterFoldLeft(l, 0)((acc, _) => acc + 1)
+  def flLength(l: List[Int]): Int = foldLeft2(l, 0)((acc, _) => acc + 1)
+
+  /**
+    * 3.12 reverse a list using a fold
+    */
+  def reverseList[A](l: List[A]): List[A] = {
+    foldLeft(l, Nil:List[A])((acc: List[A], h: A) => Cons(h, acc))
+  }
+
+  /**
+    * 3.14 append using a fold
+    */
+  def append[A](l1: List[A], l2: List[A]): List[A] =
+    foldRight(l1, l2)((x: A, acc: List[A]) => Cons(x, acc))
+
+  /* Simpler syntax than mine */
+  def append2[A, B](l1: List[A], l2: List[A]): List[A] =
+    foldRight(l1, l2)(Cons(_, _)) // foldRight handles Nil value for l1
+
+  /**
+    * 3.15 concatenate a list of lists to a single list
+    */
+  def concat[A](l: List[List[A]]): List[A] = {
+    foldRight(l, Nil:List[A])(append)
+  }
 
   def main(args: Array[String]): Unit = {
     val x = List(1, 2, 3, 4) match {

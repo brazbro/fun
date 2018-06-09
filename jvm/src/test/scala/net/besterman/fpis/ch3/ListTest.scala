@@ -104,11 +104,11 @@ class ListTest extends FunSpec {
     }
 
     it("Better foldLeft should work") {
-      doFoldLeftTests(betterFoldLeft)
+      doFoldLeftTests(foldLeft2)
     }
   }
 
-  describe("List.foldLeft functions") {
+  describe("List: fold functions") {
     it("flSum should work") {
       assert(flSum(List(1, 2, 3, 4, 5)) === 15)
       assert(flSum(List()) === 0)
@@ -127,6 +127,23 @@ class ListTest extends FunSpec {
       assert(flLength(Nil) === 0)
       assert(flLength(List()) === 0)
       assert(flLength(List(8, 7, 6, 5, 4, 3, 2, 1)) === 8)
+    }
+
+    it("reverseList should work") {
+      assert(reverseList(List(1, 2, 3, 4)) === List(4, 3, 2, 1))
+      assert(reverseList(List(1)) === List(1))
+      assert(reverseList(Nil) === Nil)
+    }
+
+    it("append should work") {
+      assert(append2(List(1, 2, 3, 4), List(5, 6, 7, 8)) === List(1, 2, 3, 4, 5, 6, 7, 8))
+      //intercept[Exception](append(Nil, List(1, 2, 3, 4)))
+      assert(append2(Nil, List(1, 2, 3, 4)) === List(1, 2, 3, 4))
+      assert(append2(List(1, 2, 3, 4), Nil) === List(1, 2, 3, 4))
+    }
+
+    it("concat should work") {
+      assert(concat(List(List(1, 2, 3, 4), List(5, 6, 7, 8), List(9, 0))) === List(1, 2, 3, 4, 5, 6, 7, 8, 9, 0))
     }
   }
 }
