@@ -212,6 +212,24 @@ object List {
     flatMap2(l)(a => if (f(a)) List(a) else Nil)
   }
 
+  /**
+    * 3.22 function that accepts 2 lists and constructs a new list by adding corresponding elements
+    */
+  def addLists(l1: List[Int], l2: List[Int]): List[Int] = (l1, l2) match {
+    case (Nil, _) => l2
+    case (_, Nil) => l1
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(h1 + h2, addLists(t1, t2))
+  }
+
+  /**
+    * 3.23 Generalize addLists to Lists of any type and any combining operation
+    */
+  def zipWith[A, B, C](l1: List[A], l2: List[B])(f: (A, B) => C): List[C] = (l1, l2) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), zipWith(t1, t2)(f))
+  }
+
   def main(args: Array[String]): Unit = {
     val x = List(1, 2, 3, 4) match {
       case Cons(x, Cons(2, Cons(4, _))) => x

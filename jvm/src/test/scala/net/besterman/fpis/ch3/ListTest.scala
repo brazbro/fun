@@ -195,4 +195,27 @@ class ListTest extends FunSpec {
       flatMapTest(flatMap2)
     }
   }
+
+  describe("List.addLists") {
+    it("should add lists of equal length") {
+      assert(addLists(List(1, 2, 3), List(4, 5, 6)) === List(5, 7, 9))
+    }
+
+    it("should add lists of unequal length") {
+      assert(addLists(List(1, 2, 3, 4), List(5, 6)) === List(6, 8, 3, 4))
+      assert(addLists(List(0, 7), List(1, 2, 3, 4)) === List(1, 9, 3, 4))
+    }
+  }
+
+  describe("List.zipWith") {
+    it("should zip lists of equal length") {
+      assert(zipWith(List(1, 2, 3), List(4, 5, 6))(_*_) === List(4, 10, 18))
+      assert(zipWith(List("1", "2", "3"), List(4, 5, 6))(_.toInt * _) === List(4, 10, 18))
+    }
+
+    it("only zips lists of unequal length by stopping after the shorter list") {
+      assert(zipWith(List(1, 2, 3, 4), List(5, 6))(_*_) === List(5, 12))
+      assert(zipWith(List(1, 2), List("3", "4", "5", "6"))(_*_.toInt) === List(3, 8))
+    }
+  }
 }
