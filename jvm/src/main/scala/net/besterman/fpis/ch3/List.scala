@@ -230,6 +230,49 @@ object List {
     case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), zipWith(t1, t2)(f))
   }
 
+  /**
+    * 3.24 implement hasSubsequence
+    */
+
+  def firstN[A](l: List[A], n: Int): List[A] = l match {
+    case Nil => Nil
+    case Cons(h, t) if n <= 0 => Nil
+    case Cons(h, t) => Cons(h, firstN(t, n - 1))
+  }
+
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
+    val subLen = length(sub)
+    sup match {
+      case Nil => false
+      case Cons(h, t) if length(sup) < subLen => false
+      case Cons(h, t) => firstN(sup, subLen) == sub || hasSubsequence(t, sub)
+    }
+  }
+
+  @annotation.tailrec
+  def startsWith[A](l: List[A], seq: List[A]): Boolean = (l, seq) match {
+    case (Nil, _) => false
+    case (_, Nil) => true
+    case (Cons(h1, t1), Cons(h2, t2)) => h1 == h2 && startsWith(t1, t2)
+  }
+
+  @annotation.tailrec
+  def hasSubsequence2[A](sup: List[A], sub: List[A]): Boolean = (sup, sub) match {
+    case (_, Nil) => true
+    case (Nil, _) => false
+    case (Cons(h1, t1), _) => startsWith(sup, sub) || hasSubsequence2(t1, sub)
+  }
+
+  /**
+    * For fun...
+    */
+  def sublist[A](l: List[A], start: Int, len: Int): List[A] = {
+    if (start > length(l)) Nil else {
+      val l2 = drop(l, start)
+      firstN(l2, len)
+    }
+  }
+
   def main(args: Array[String]): Unit = {
     val x = List(1, 2, 3, 4) match {
       case Cons(x, Cons(2, Cons(4, _))) => x

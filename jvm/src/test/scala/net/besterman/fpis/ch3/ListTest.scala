@@ -171,7 +171,7 @@ class ListTest extends FunSpec {
   }
 
   /* Filter odd numbers from a list */
-  def filterTest(filterFn: List[Int] => (Int => Boolean) => List[Int]): Unit = {
+  private def filterTest(filterFn: List[Int] => (Int => Boolean) => List[Int]): Unit = {
     assert(filterFn(List(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))(_%2==0) === List(-2, 0, 2, 4, 6, 8, 10))
   }
 
@@ -185,7 +185,7 @@ class ListTest extends FunSpec {
   }
 
   /* Double up elements in a list */
-  def flatMapTest(flatMapFn: List[Int] => (Int => List[Int]) => List[Int]): Unit = {
+  private def flatMapTest(flatMapFn: List[Int] => (Int => List[Int]) => List[Int]): Unit = {
     assert(flatMapFn(List(1, 2, 3))(i => List(i, i)) === List(1, 1, 2, 2, 3, 3))
   }
 
@@ -213,9 +213,33 @@ class ListTest extends FunSpec {
       assert(zipWith(List("1", "2", "3"), List(4, 5, 6))(_.toInt * _) === List(4, 10, 18))
     }
 
-    it("only zips lists of unequal length by stopping after the shorter list") {
+    it("should zip lists of unequal length by stopping after the shorter list") {
       assert(zipWith(List(1, 2, 3, 4), List(5, 6))(_*_) === List(5, 12))
       assert(zipWith(List(1, 2), List("3", "4", "5", "6"))(_*_.toInt) === List(3, 8))
+    }
+  }
+
+  private def doSubsequenceTest(f: (List[Int], List[Int]) => Boolean): Unit = {
+    val l = List(1, 2, 3, 4, 5, 6, 7)
+    assert(f(l, List(3, 4, 5)))
+    assert(f(l, List(1)))
+    assert(f(l, Nil))
+    assert(!f(l, List(3, 4, 5, 7)))
+  }
+
+  describe("List.hasSubsequence") {
+    doSubsequenceTest(hasSubsequence)
+    doSubsequenceTest(hasSubsequence2)
+  }
+
+  describe("List.subList") {
+    it("should work") {
+      val l = List(1, 2, 3, 4)
+      assert(sublist(l, 0, 4) === l)
+      assert(sublist(l, 0, 3) === List(1, 2, 3))
+      assert(sublist(l, 1, 1) === List(2))
+      assert(sublist(l, 1, 4) === List(2, 3, 4))
+      assert(sublist(l, 3, 0) === Nil)
     }
   }
 }
