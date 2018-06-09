@@ -144,6 +144,55 @@ class ListTest extends FunSpec {
 
     it("concat should work") {
       assert(concat(List(List(1, 2, 3, 4), List(5, 6, 7, 8), List(9, 0))) === List(1, 2, 3, 4, 5, 6, 7, 8, 9, 0))
+      assert(concat(List(Nil, List(5, 6, 7, 8), List(9, 0))) === List(5, 6, 7, 8, 9, 0))
+      assert(concat(List(List(1, 2, 3, 4), List(), List(9, 0))) === List(1, 2, 3, 4, 9, 0))
+      assert(concat(List(List(1, 2, 3, 4), List(5, 6, 7, 8), Nil)) === List(1, 2, 3, 4, 5, 6, 7, 8))
+    }
+
+    it("add1 should work") {
+      assert(add1(List(-10, 3, -100, 22, 109)) === List(-9, 4, -99, 23, 110))
+    }
+
+    it("doubleToString should work") {
+      assert(doubleToString(List(3.2, -9.01, 0.003)) === List("3.2", "-9.01", "0.003"))
+    }
+  }
+
+  describe("List.map") {
+    it("should generalize the add1 function") {
+      val l = List(1, 2, 3, 4, 5)
+      assert(map(l)(_ + 1) === add1(l))
+    }
+
+    it("should generalize the doubleToString function") {
+      val l = List(3.2, -9.01, 0.003)
+      assert(map(l)(_.toString) === doubleToString(l))
+    }
+  }
+
+  /* Filter odd numbers from a list */
+  def filterTest(filterFn: List[Int] => (Int => Boolean) => List[Int]): Unit = {
+    assert(filterFn(List(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))(_%2==0) === List(-2, 0, 2, 4, 6, 8, 10))
+  }
+
+  describe("List.filter in its various forms") {
+    it("should filter all odd numbers from a list") {
+      filterTest(filter)
+      filterTest(filter2)
+      filterTest(filter3)
+      filterTest(filter4)
+    }
+  }
+
+  /* Double up elements in a list */
+  def flatMapTest(flatMapFn: List[Int] => (Int => List[Int]) => List[Int]): Unit = {
+    assert(flatMapFn(List(1, 2, 3))(i => List(i, i)) === List(1, 1, 2, 2, 3, 3))
+  }
+
+  describe("List.flatMap in its various forms") {
+    it("should work") {
+      flatMapTest(flatMap)
+      flatMapTest(flatMap2)
     }
   }
 }

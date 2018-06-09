@@ -154,6 +154,64 @@ object List {
     foldRight(l, Nil:List[A])(append)
   }
 
+  /**
+    * 3.16 transform a list of integers by adding 1 to each
+    */
+  def add1(l: List[Int]): List[Int] =
+    foldRight(l, Nil: List[Int])((i: Int, acc: List[Int]) => Cons(i + 1, acc))
+
+  /**
+    * 3.17 convert a list of Double to a list of String
+    */
+  def doubleToString(l: List[Double]): List[String] =
+    foldRight(l, Nil: List[String])((h, t) => Cons(h.toString, t))
+
+  /**
+    * 3.18 write a function "map" that generalizes modifying each element in a list
+    */
+  def map[A, B](as: List[A])(f: A => B): List[B] = {
+    foldRight(as, Nil: List[B])((h, t) => Cons(f(h), t))
+  }
+
+  /**
+    * 3.19 write "filter" that removes elements from a list that do not satisfy a predicate
+    */
+  def filter[A](l: List[A])(f: A => Boolean): List[A] = l match {
+    case Nil => Nil
+    case Cons(h, t) => if (f(h)) Cons(h, filter(t)(f)) else filter(t)(f)
+  }
+
+  def filter2[A](l: List[A])(f: A => Boolean): List[A] =
+    foldRight(l, Nil: List[A])((h, t) => if (f(h)) Cons(h, t) else t)
+
+  def filter3[A](l: List[A])(f: A => Boolean): List[A] = {
+    val buf = new collection.mutable.ListBuffer[A]
+    @annotation.tailrec
+    def go(l1: List[A]): Unit = l1 match {
+      case Nil => ()
+      case Cons(h, t) => if (f(h)) buf += h; go(t)
+    }
+    go(l)
+    List(buf.toList: _*)
+  }
+
+  /**
+    * 3.20 write "flatMap"
+    */
+  def flatMap[A, B](l: List[A])(f: A => List[B]): List[B] = {
+    foldRight(l, Nil: List[B])((h, t) => append(f(h), t))
+  }
+
+  def flatMap2[A, B](l: List[A])(f: A => List[B]): List[B] =
+    concat(map(l)(f))
+
+  /**
+    * 3.21 implement "filter" using "flatMap"
+    */
+  def filter4[A](l: List[A])(f: A => Boolean): List[A] = {
+    flatMap2(l)(a => if (f(a)) List(a) else Nil)
+  }
+
   def main(args: Array[String]): Unit = {
     val x = List(1, 2, 3, 4) match {
       case Cons(x, Cons(2, Cons(4, _))) => x
